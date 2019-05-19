@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block heading %}
+Channels :-
+{% endblock %}
+
+{% block body %}
+  Hello {{username}} <br><br>
+  {% if channels|length == 0 %}
+    No existing channels, create one by clicking the button at the end of the page.
+  {% else %}
+    TODO
+  {% endif %}
+{% endblock %}
