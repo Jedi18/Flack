@@ -9,6 +9,12 @@ Channels :-
   {% if channels|length == 0 %}
     No existing channels, create one by clicking the button at the end of the page.
   {% else %}
-    TODO
+    {% for channel in channels %}
+    <a href="#" class="btn btn-secondary">{{channel["name"]}}</a>
+    <br>
+    {% endfor %}
   {% endif %}
+  <br>
+  <br>
+  <a class="btn btn-primary" href="{{url_for('create')}}">Create channel</a>
 {% endblock %}
