@@ -10,7 +10,7 @@ Channels :-
     No existing channels, create one by clicking the button at the end of the page.
   {% else %}
     {% for channel in channels %}
-    <a href="#" class="btn btn-secondary">{{channel["name"]}}</a>
+    <a href="{{url_for('channel', id=channel['id'])}}" class="btn btn-secondary">{{channel["name"]}}</a>
     <br>
     {% endfor %}
   {% endif %}

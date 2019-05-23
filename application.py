@@ -6,7 +6,7 @@ from flask_socketio import SocketIO, emit
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-from channel import *
+from models import *
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
@@ -48,8 +48,17 @@ def create():
         chan = Channel(name = channel_name)
         db.session.add(chan)
         db.session.commit()
-        
+
         return redirect(url_for('index'))
+
+@app.route("/channel")
+def channel():
+    id = request.args.get("id")
+    channel = Channel.query.get(id)
+    messages = channel.messages
+    channel_send = {"name":channel.name}
+    messages_send = [{"message":message.message, "count":message.count} for message in messages]
+    return render_template("channel.html", messages=messages_send, channel=channel_send)
 
 if __name__ == '__main__':
     app.run(debug=True)

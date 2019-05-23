@@ -1,12 +1,13 @@
 {% extends "layout.html" %}
 
 {% block heading %}
-Create channel :-
+{{channel.name}} :-
 {% endblock %}
 
+<br>
+
 {% block body %}
-  <form action="{{url_for('create')}}" method='post'>
-    <input name="channel" type="text" placeholder="Enter channel name"></input>
-    <button>Create</button>
-  </form>
+{% for message in messages %}
+  {{message.message}}<br>
+{% endfor %}
 {% endblock %}
