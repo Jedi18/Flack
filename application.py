@@ -6,6 +6,8 @@ from flask_socketio import SocketIO, emit
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
+from channel import *
+
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
@@ -15,15 +17,16 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-engine = create_engine("postgres://postgres:password@localhost:5432/postgres")
-db = scoped_session(sessionmaker(bind=engine))
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgres://postgres:password@localhost:5432/postgres"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db.init_app(app)
 
 @app.route("/")
 def index():
     if 'username' not in session or session['username'] == '':
         return redirect(url_for('login'))
     else:
-        channels = db.execute("SELECT * FROM channels").fetchall()
+        channels = Channel.query.all()
         return render_template('index.html', channels=channels, username=session['username'])
 
 @app.route("/login", methods=["GET", "POST"])
@@ -41,9 +44,11 @@ def create():
         return render_template("create.html")
     else:
         channel_name = request.form.get('channel')
-        db.execute("INSERT INTO channels(name) VALUES(:chan)",{"chan":channel_name})
-        db.commit()
-        # stuff with channel name
+
+        chan = Channel(name = channel_name)
+        db.session.add(chan)
+        db.session.commit()
+        
         return redirect(url_for('index'))
 
 if __name__ == '__main__':
