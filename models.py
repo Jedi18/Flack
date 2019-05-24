@@ -10,6 +10,7 @@ class Channel(db.Model):
 
 class Message(db.Model):
     __tablename__ = "messages"
+    counter = 2
     id = db.Column(db.Integer, primary_key=True)
     message = db.Column(db.String, nullable=False)
     channel = db.Column(db.Integer, db.ForeignKey("channels.id"), nullable=False)

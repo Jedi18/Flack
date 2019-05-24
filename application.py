@@ -64,9 +64,10 @@ def channel():
 def submitmessage(data):
     mess = data['message']
     channelid = data['channelid']
-    print()
-    print("mess - {}, channelid - {}".format(mess,channelid))
-    print()
+    message  = Message(message=mess, channel=int(channelid), count=Message.counter)
+    db.session.add(message)
+    db.session.commit()
+    Message.counter += 1
     emit("message recieve", mess, broadcast=True)
 
 if __name__ == '__main__':
