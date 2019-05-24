@@ -1,5 +1,11 @@
 {% extends "layout.html" %}
 
+{% block jsscripts %}
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+<script type="text/javascript" src="{{url_for('static', filename='js/channel.js')}}"></script>
+<meta id="channelid" data-id="{{channel.id}}">
+{% endblock %}
+
 {% block heading %}
 {{channel.name}} :-
 {% endblock %}
@@ -7,7 +13,17 @@
 <br>
 
 {% block body %}
+<div id="messages">
 {% for message in messages %}
-  {{message.message}}<br>
+  <div>
+    {{message.message}}<br>
+  </div>
 {% endfor %}
+</div>
+
+<br>
+<div id="add_message">
+  <input type="text" name="message_in" id="message_in">
+  <button id="enterbutton">Enter</button>
+</div>
 {% endblock %}

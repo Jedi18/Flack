@@ -56,9 +56,18 @@ def channel():
     id = request.args.get("id")
     channel = Channel.query.get(id)
     messages = channel.messages
-    channel_send = {"name":channel.name}
+    channel_send = {"name":channel.name.title(), "id":channel.id}
     messages_send = [{"message":message.message, "count":message.count} for message in messages]
     return render_template("channel.html", messages=messages_send, channel=channel_send)
+
+@socketio.on("submit message")
+def submitmessage(data):
+    mess = data['message']
+    channelid = data['channelid']
+    print()
+    print("mess - {}, channelid - {}".format(mess,channelid))
+    print()
+    emit("message recieve", mess, broadcast=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
