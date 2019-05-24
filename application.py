@@ -57,18 +57,17 @@ def channel():
     channel = Channel.query.get(id)
     messages = channel.messages
     channel_send = {"name":channel.name.title(), "id":channel.id}
-    messages_send = [{"message":message.message, "count":message.count} for message in messages]
+    messages_send = [{"message":message.message, "sentby":message.sentby} for message in messages]
     return render_template("channel.html", messages=messages_send, channel=channel_send)
 
 @socketio.on("submit message")
 def submitmessage(data):
     mess = data['message']
     channelid = data['channelid']
-    message  = Message(message=mess, channel=int(channelid), count=Message.counter)
+    message  = Message(message=mess, channel=int(channelid), sentby=session['username'])
     db.session.add(message)
     db.session.commit()
-    Message.counter += 1
-    emit("message recieve", mess, broadcast=True)
+    emit("message recieve", {"mess":mess, "sentby":session['username']}, broadcast=True)
 
 if __name__ == '__main__':
     app.run(debug=True)

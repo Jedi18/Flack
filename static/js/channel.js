@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   socket.on('message recieve', (data) => {
     var div = document.createElement('div');
-    div.innerHTML = `${data}<br>`;
+    div.innerHTML = `${data['sentby']} : ${data['mess']}<br>`;
     document.querySelector('#messages').appendChild(div);
   });
 

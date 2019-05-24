@@ -16,7 +16,7 @@
 <div id="messages">
 {% for message in messages %}
   <div>
-    {{message.message}}<br>
+    {{message.sentby}} : {{message.message}}<br>
   </div>
 {% endfor %}
 </div>
