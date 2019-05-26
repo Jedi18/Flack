@@ -3,7 +3,7 @@ import os
 from flask import Flask, render_template, redirect, request, session, url_for
 from flask_session import Session
 from flask_socketio import SocketIO, emit
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 from models import *
@@ -57,11 +57,21 @@ def create():
 def channel():
     id = request.args.get("id")
     channel = Channel.query.get(id)
-    messages = channel.messages
+    messages = Message.query.filter_by(channel=id).order_by(desc(Message.senton)).limit(20).all()
     channel_send = {"name":channel.name.title(), "id":channel.id}
-    messages_send = [{"message":message.message, "sentby":message.sentby} for message in messages]
+    messages_send = [{"message":message.message, "sentby":message.sentby, "senton":message.senton.strftime("%H:%M")} for message in messages]
+
+    messages_send.reverse()
 
     session['lastchannel'] = id
+
+    # remove if more than 100 messages
+    message_tobedel = Message.query.filter_by(channel=id).order_by(desc(Message.senton)).offset(10).all()
+
+    if message_tobedel:
+        for message in message_tobedel:
+            db.session.delete(message)
+        db.session.commit()
 
     return render_template("channel.html", messages=messages_send, channel=channel_send)
 
@@ -77,8 +87,6 @@ def submitmessage(data):
     message  = Message(message=mess, channel=int(channelid), sentby=session['username'])
     db.session.add(message)
     db.session.commit()
-
-    # remove if more than 100 messages
 
     emit("message recieve", {"mess":mess, "sentby":session['username']}, broadcast=True)
 
