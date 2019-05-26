@@ -26,8 +26,10 @@ def index():
     if 'username' not in session or session['username'] == '':
         return redirect(url_for('login'))
     else:
-        channels = Channel.query.all()
-        return render_template('index.html', channels=channels, username=session['username'])
+        if session.get('lastchannel') is None:
+            return redirect(url_for('channellist'))
+        else:
+            return redirect(url_for('channel', id=session['lastchannel']))
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -58,7 +60,15 @@ def channel():
     messages = channel.messages
     channel_send = {"name":channel.name.title(), "id":channel.id}
     messages_send = [{"message":message.message, "sentby":message.sentby} for message in messages]
+
+    session['lastchannel'] = id
+
     return render_template("channel.html", messages=messages_send, channel=channel_send)
+
+@app.route("/channellist")
+def channellist():
+    channels = Channel.query.all()
+    return render_template('index.html', channels=channels, username=session['username'])
 
 @socketio.on("submit message")
 def submitmessage(data):
@@ -67,6 +77,9 @@ def submitmessage(data):
     message  = Message(message=mess, channel=int(channelid), sentby=session['username'])
     db.session.add(message)
     db.session.commit()
+
+    # remove if more than 100 messages
+
     emit("message recieve", {"mess":mess, "sentby":session['username']}, broadcast=True)
 
 if __name__ == '__main__':

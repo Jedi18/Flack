@@ -1,3 +1,4 @@
 static/css/bootstrap/* linguist-vendored
 static/js/bootstrap/* linguist-vendored
 templates/* linguist-vendored
+static/js/socketio/* linguist-vendored
