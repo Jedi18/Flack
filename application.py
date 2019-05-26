@@ -8,6 +8,8 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 from models import *
 
+CHANNEL_MESSAGE_LIMIT = 100
+
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
@@ -66,7 +68,7 @@ def channel():
     session['lastchannel'] = id
 
     # remove if more than 100 messages
-    message_tobedel = Message.query.filter_by(channel=id).order_by(desc(Message.senton)).offset(10).all()
+    message_tobedel = Message.query.filter_by(channel=id).order_by(desc(Message.senton)).offset(CHANNEL_MESSAGE_LIMIT).all()
 
     if message_tobedel:
         for message in message_tobedel:
@@ -84,11 +86,12 @@ def channellist():
 def submitmessage(data):
     mess = data['message']
     channelid = data['channelid']
-    message  = Message(message=mess, channel=int(channelid), sentby=session['username'])
+    message = Message(message=mess, channel=int(channelid), sentby=session['username'])
+    senton = datetime.datetime.utcnow().strftime("%H:%M")
     db.session.add(message)
     db.session.commit()
 
-    emit("message recieve", {"mess":mess, "sentby":session['username']}, broadcast=True)
+    emit("message recieve", {"mess":mess, "sentby":session['username'], "senton":senton}, broadcast=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
