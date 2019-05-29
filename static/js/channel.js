@@ -8,6 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const channelid = document.querySelector('#channelid').dataset.id;
         socket.emit('submit message', {'message':message, 'channelid':channelid});
       };
+
+      document.querySelectorAll('.deletemessage').forEach((button) => {
+        button.onclick = () => {
+        const messageid = button.dataset.id;
+        socket.emit('delete message', {'messageid':messageid});
+        };
+      });
   });
 
   socket.on('message recieve', (data) => {
@@ -15,6 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
     div.innerHTML = `${data['sentby']} : ${data['mess']}<br>${data['senton']}<div class="float right">
     <button id="deletemessage" data-id="${data['id']}">Delete</button></div><br><br>`;
     document.querySelector('#messages').appendChild(div);
+  });
+
+  socket.on('message deleted', (data) => {
+    divid = "#message" + data['messageid'];
+    divtobedel = document.querySelector(divid);
+    divtobedel.parentNode.removeChild(divtobedel);
   });
 
 });

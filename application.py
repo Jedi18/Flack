@@ -97,5 +97,14 @@ def submitmessage(data):
 
     emit("message recieve", {"id":id,"mess":mess, "sentby":session['username'], "senton":senton}, broadcast=True)
 
+@socketio.on("delete message")
+def deletemessage(data):
+    messageid = data['messageid']
+    message = Message.query.get(messageid)
+    db.session.delete(message)
+    db.session.commit()
+
+    emit("message deleted", {"messageid":messageid})
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -15,9 +15,9 @@
 {% block body %}
 <div id="messages">
 {% for message in messages %}
-  <div>
+  <div id="message{{message.id}}">
     {{message.sentby}} : {{message.message}}<br>
-    {{message.senton}} <div class="float right"><button id="deletemessage" data-id="{{message.id}}">Delete</button></div><br>
+    {{message.senton}} <div class="float right"><button class="deletemessage" data-id="{{message.id}}">Delete</button></div><br>
     <br>
   </div>
 {% endfor %}
