@@ -12,7 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   socket.on('message recieve', (data) => {
     var div = document.createElement('div');
-    div.innerHTML = `${data['sentby']} : ${data['mess']}<br>${data['senton']}<br><br>`;
+    div.innerHTML = `${data['sentby']} : ${data['mess']}<br>${data['senton']}<div class="float right">
+    <button id="deletemessage" data-id="${data['id']}">Delete</button></div><br><br>`;
     document.querySelector('#messages').appendChild(div);
   });
 

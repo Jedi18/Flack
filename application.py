@@ -61,7 +61,7 @@ def channel():
     channel = Channel.query.get(id)
     messages = Message.query.filter_by(channel=id).order_by(desc(Message.senton)).limit(20).all()
     channel_send = {"name":channel.name.title(), "id":channel.id}
-    messages_send = [{"message":message.message, "sentby":message.sentby, "senton":message.senton.strftime("%H:%M")} for message in messages]
+    messages_send = [{"id":message.id,"message":message.message, "sentby":message.sentby, "senton":message.senton.strftime("%H:%M")} for message in messages]
 
     messages_send.reverse()
 
@@ -86,12 +86,16 @@ def channellist():
 def submitmessage(data):
     mess = data['message']
     channelid = data['channelid']
+
     message = Message(message=mess, channel=int(channelid), sentby=session['username'])
     senton = datetime.datetime.utcnow().strftime("%H:%M")
     db.session.add(message)
     db.session.commit()
 
-    emit("message recieve", {"mess":mess, "sentby":session['username'], "senton":senton}, broadcast=True)
+    last_message = Message.query.filter_by(channel=channelid).order_by(desc(Message.senton)).limit(1).all()
+    id = last_message[0].id
+
+    emit("message recieve", {"id":id,"mess":mess, "sentby":session['username'], "senton":senton}, broadcast=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
