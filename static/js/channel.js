@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('html, body').animate({scrollTop:$(document).height()}, 'slow');
 
   var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+  var pageNumber = 0;
 
   socket.on('connect', () => {
       document.querySelector('#enterbutton').onclick = () => {
@@ -33,10 +34,30 @@ document.addEventListener('DOMContentLoaded', () => {
     divtobedel.parentNode.removeChild(divtobedel);
   });
 
+  socket.on('older recieved', (data) => {
+    var messages = data['messages'];
+
+    var prevDiv = document.querySelector('.deletemessage').parentNode.parentNode;
+    var parentNode = document.querySelector('#messages')
+
+    messages.forEach((message) => {
+      var div = document.createElement('div');
+      div.innerHTML = `${message['sentby']} : ${message['message']}<br>${message['senton']}<div class="float right">
+      <button id="deletemessage" data-id="${message['id']}">Delete</button></div><br><br>`;
+      parentNode.insertBefore(div, prevDiv);
+      prevDiv = div;
+    });
+  });
+
   window.onscroll = () => {
     if(window.scrollY == 0)
     {
-      // TODO, fetch older messages
+      //var firstOne = document.querySelector('.deletemessage').parentNode.parentNode;
+      //var topmessageid = firstOne.id;
+      //topmessageid = topmessageid.substr(topmessageid.length - 2, 2);
+      pageNumber++;
+      channelId = document.querySelector('#channelid').dataset.id;
+      socket.emit('retrieve older', {"pageNumber":pageNumber, "channelId":channelId});
     }
   };
 

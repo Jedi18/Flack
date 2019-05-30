@@ -106,5 +106,16 @@ def deletemessage(data):
 
     emit("message deleted", {"messageid":messageid})
 
+@socketio.on("retrieve older")
+def retrieveolder(data):
+    pageNumber = data["pageNumber"]
+    channelId = data["channelId"]
+    messages = Message.query.filter_by(channel=channelId).order_by(desc(Message.senton)).limit(20).offset(20 * pageNumber).all()
+
+    messages_send = [{"id":message.id,"message":message.message, "sentby":message.sentby, "senton":message.senton.strftime("%H:%M")} for message in messages]
+    messages_send.reverse()
+
+    emit("older recieved", {"messages":messages_send})
+
 if __name__ == '__main__':
     app.run(debug=True)
