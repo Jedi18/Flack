@@ -22,7 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   socket.on('message recieve', (data) => {
     var div = document.createElement('div');
-    div.innerHTML = `${data['sentby']} : ${data['mess']}<br>${data['senton']}<div class="float right">
+
+    let userurl = document.querySelector('#userurl').dataset.url + "?name=" + data['sentby'];
+
+    div.innerHTML = `<a href="${userurl}">${data['sentby']}</a> : ${data['mess']}<br>${data['senton']}<div class="float right">
     <button id="deletemessage" data-id="${data['id']}">Delete</button></div><br><br>`;
     document.querySelector('#messages').appendChild(div);
     document.querySelector('#message_in').value = "";
@@ -38,11 +41,13 @@ document.addEventListener('DOMContentLoaded', () => {
     var messages = data['messages'];
 
     var prevDiv = document.querySelector('.deletemessage').parentNode.parentNode;
-    var parentNode = document.querySelector('#messages')
+    var parentNode = document.querySelector('#messages');
 
     messages.forEach((message) => {
+      let userurl = document.querySelector('#userurl').dataset.url + "?name=" + message['sentby'];
       var div = document.createElement('div');
-      div.innerHTML = `${message['sentby']} : ${message['message']}<br>${message['senton']}<div class="float right">
+
+      div.innerHTML = `<a href="${userurl}">${message['sentby']}</a> : ${message['message']}<br>${message['senton']}<div class="float right">
       <button id="deletemessage" data-id="${message['id']}">Delete</button></div><br><br>`;
       parentNode.insertBefore(div, prevDiv);
       prevDiv = div;

@@ -4,6 +4,7 @@
 <script type="text/javascript" src="{{url_for('static', filename='js/socketio/socket.io.slim.js')}}"></script>
 <script type="text/javascript" src="{{url_for('static', filename='js/channel.js')}}"></script>
 <meta id="channelid" data-id="{{channel.id}}">
+<meta id="userurl" data-url="{{url_for('user')}}">
 {% endblock %}
 
 {% block heading %}
@@ -16,7 +17,7 @@
 <div id="messages">
 {% for message in messages %}
   <div id="message{{message.id}}">
-    {{message.sentby}} : {{message.message}}<br>
+    <a href="{{url_for('user',name=message.sentby)}}">{{message.sentby}}</a> : {{message.message}}<br>
     {{message.senton}} <div class="float right"><button class="deletemessage" data-id="{{message.id}}">Delete</button></div><br>
     <br>
   </div>

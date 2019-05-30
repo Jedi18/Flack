@@ -82,6 +82,11 @@ def channellist():
     channels = Channel.query.all()
     return render_template('index.html', channels=channels, username=session['username'])
 
+@app.route("/user")
+def user():
+    name = request.args.get("name")
+    return render_template('user.html', name=name)
+
 @socketio.on("submit message")
 def submitmessage(data):
     mess = data['message']
