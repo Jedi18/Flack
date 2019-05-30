@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+  $('html, body').animate({scrollTop:$(document).height()}, 'slow');
+
   var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
   socket.on('connect', () => {
@@ -22,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     div.innerHTML = `${data['sentby']} : ${data['mess']}<br>${data['senton']}<div class="float right">
     <button id="deletemessage" data-id="${data['id']}">Delete</button></div><br><br>`;
     document.querySelector('#messages').appendChild(div);
+    document.querySelector('#message_in').value = "";
   });
 
   socket.on('message deleted', (data) => {
@@ -29,5 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
     divtobedel = document.querySelector(divid);
     divtobedel.parentNode.removeChild(divtobedel);
   });
+
+  window.onscroll = () => {
+    if(window.scrollY == 0)
+    {
+      // TODO, fetch older messages
+    }
+  };
 
 });
