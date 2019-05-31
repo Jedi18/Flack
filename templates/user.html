@@ -1,9 +1,17 @@
 {% extends "layout.html" %}
 
+{% block jsscripts %}
+<script type="text/javascript" src="{{url_for('static', filename='js/user.js')}}"></script>
+<meta id="username" data-name="{{session['username']}}">
+<meta id="personalcreateurl" data-url="{{url_for('createpersonalchannel')}}">
+{% endblock %}
+
 {% block heading %}
-{{name}}:-
+<div id="userpagename">{{name}}</div>:-
 {% endblock %}
 
 {% block body %}
-  TODO
+  {% if name != session['username'] %}
+    <button id="personalchannel">Create personal channel</button>
+  {% endif %}
 {% endblock %}

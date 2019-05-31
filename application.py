@@ -87,6 +87,16 @@ def user():
     name = request.args.get("name")
     return render_template('user.html', name=name)
 
+@app.route('/createpersonalchannel', methods=["POST"])
+def createpersonalchannel():
+    channelname = request.form.get('channelname')
+    channel = Channel(name=channelname)
+    db.session.add(channel)
+    db.session.commit()
+
+    chan = Channel.query.filter_by(name=channelname).all()[0]
+    return redirect(url_for('channel',id = chan.id))
+
 @socketio.on("submit message")
 def submitmessage(data):
     mess = data['message']
