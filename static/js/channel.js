@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var div = document.createElement('div');
 
     let userurl = document.querySelector('#userurl').dataset.url + "?name=" + data['sentby'];
+    div.id = "message" + data['id'];
 
     div.innerHTML = `<a href="${userurl}">${data['sentby']}</a> : ${data['mess']}<br>${data['senton']}<div class="float right">
     <button id="deletemessage" data-id="${data['id']}">Delete</button></div><br><br>`;
@@ -46,9 +47,21 @@ document.addEventListener('DOMContentLoaded', () => {
     messages.forEach((message) => {
       let userurl = document.querySelector('#userurl').dataset.url + "?name=" + message['sentby'];
       var div = document.createElement('div');
+      div.id = "message" + message['id'];
 
-      div.innerHTML = `<a href="${userurl}">${message['sentby']}</a> : ${message['message']}<br>${message['senton']}<div class="float right">
-      <button id="deletemessage" data-id="${message['id']}">Delete</button></div><br><br>`;
+      // Only allow delete button to be displayed if message by current user
+      let username = document.querySelector('#currentuser').dataset.user;
+      let allowdelete = message['sentby'] == username;
+
+      if(allowdelete)
+      {
+        div.innerHTML = `<a href="${userurl}">${message['sentby']}</a> : ${message['message']}<br>${message['senton']}<div class="float right">
+        <button id="deletemessage" data-id="${message['id']}">Delete</button></div><br><br>`;
+      }
+      else{
+        div.innerHTML = `<a href="${userurl}">${message['sentby']}</a> : ${message['message']}<br>${message['senton']}<div class="float right">
+        <button id="deletemessage" data-id="${message['id']}" disabled>Delete</button></div><br><br>`;
+      }
       parentNode.insertBefore(div, prevDiv);
       prevDiv = div;
     });

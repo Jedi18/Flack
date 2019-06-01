@@ -5,6 +5,7 @@
 <script type="text/javascript" src="{{url_for('static', filename='js/channel.js')}}"></script>
 <meta id="channelid" data-id="{{channel.id}}">
 <meta id="userurl" data-url="{{url_for('user')}}">
+<meta id="currentuser" data-user="{{session['username']}}">
 {% endblock %}
 
 {% block heading %}
@@ -18,7 +19,11 @@
 {% for message in messages %}
   <div id="message{{message.id}}">
     <a href="{{url_for('user',name=message.sentby)}}">{{message.sentby}}</a> : {{message.message}}<br>
-    {{message.senton}} <div class="float right"><button class="deletemessage" data-id="{{message.id}}">Delete</button></div><br>
+    {{message.senton}} <div class="float right"><button class="deletemessage" data-id="{{message.id}}"
+      {% if message.sentby != session['username'] %}
+      disabled
+      {% endif %}
+      >Delete</button></div><br>
     <br>
   </div>
 {% endfor %}
