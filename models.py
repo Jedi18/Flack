@@ -7,6 +7,7 @@ class Channel(db.Model):
     __tablename__ = 'channels'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
+    personal = db.Column(db.Boolean, default=False)
     messages = db.relationship("Message", backref="Channel", lazy=True)
 
 class Message(db.Model):

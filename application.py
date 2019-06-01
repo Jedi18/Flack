@@ -85,12 +85,27 @@ def channellist():
 @app.route("/user")
 def user():
     name = request.args.get("name")
-    return render_template('user.html', name=name)
+    first = name
+    last = session['username']
+    if first > last:
+        temp = last
+        last = first
+        first = temp
+
+    channelname = "{}to{}".format(first, last)
+
+    exists = False
+
+    chan = Channel.query.filter_by(name=channelname).all()
+    if len(chan) != 0:
+        exists = True
+
+    return render_template('user.html', name=name, exists=exists, channelname=channelname)
 
 @app.route('/createpersonalchannel', methods=["POST"])
 def createpersonalchannel():
     channelname = request.form.get('channelname')
-    channel = Channel(name=channelname)
+    channel = Channel(name=channelname,personal=True)
     db.session.add(channel)
     db.session.commit()
 

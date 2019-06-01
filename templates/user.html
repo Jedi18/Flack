@@ -4,6 +4,13 @@
 <script type="text/javascript" src="{{url_for('static', filename='js/user.js')}}"></script>
 <meta id="username" data-name="{{session['username']}}">
 <meta id="personalcreateurl" data-url="{{url_for('createpersonalchannel')}}">
+<meta id="personalchannelname" data-name="{{channelname}}">
+<meta id="channelurl" data-url="{{url_for('channel', id=channelname)}}">
+{% if exists %}
+<meta id="exists" data-exists="true">
+{% else %}
+<meta id="exists" data-exists="false">
+{% endif %}
 {% endblock %}
 
 {% block heading %}
@@ -12,6 +19,10 @@
 
 {% block body %}
   {% if name != session['username'] %}
+    {% if exists %}
+    <button id="personalchannel">Go to personal channel</button>
+    {% else %}
     <button id="personalchannel">Create personal channel</button>
+    {% endif %}
   {% endif %}
 {% endblock %}
